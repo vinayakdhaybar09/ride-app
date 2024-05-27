@@ -1,37 +1,70 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+import { Stack, Tabs } from "expo-router";
+import { GluestackUIProvider, Text, Box, View, Button, Image } from "@gluestack-ui/themed";
+import { config } from "@gluestack-ui/config";
+import { TabBarIcon } from "@/components/navigation/TabBarIcon";
+import { AntDesign } from "@expo/vector-icons";
+import Colors from "@/constants/Colors";
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </ThemeProvider>
+    <GluestackUIProvider config={config}>
+      <Tabs
+        screenOptions={{
+          tabBarStyle:{ height:60},
+          tabBarActiveTintColor: Colors.black,
+          tabBarInactiveTintColor:Colors.gray,
+          tabBarShowLabel: false,
+          // headerShown: false,
+          headerLeft: () => (
+            <Button onPress={() => {}} style={{ marginLeft: 20 }}>
+              <Image
+                source={{
+                  uri: "https://xsgames.co/randomusers/avatar.php?g=female",
+                }}
+                style={{ width: 40, height: 40, borderRadius: 10 }}
+              />
+            </Button>
+          ),
+        }}
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "index",
+            tabBarIcon: ({ color, focused }) => (
+              <AntDesign name="home" size={24} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="create"
+          options={{
+            title: "create",
+            tabBarIcon: ({ color, focused }) => (
+              <View
+                style={{
+                  backgroundColor: Colors.black,
+                  paddingHorizontal: 16,
+                  paddingVertical: 12,
+                  borderRadius: 10,
+                  // height: 50,
+                }}
+              >
+                <AntDesign name="plus" size={24} color={Colors.bgColor} />
+              </View>
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="rides"
+          options={{
+            title: "rides",
+            tabBarIcon: ({ color, focused }) => (
+              <AntDesign name="book" size={24} color={color} />
+            ),
+          }}
+        />
+      </Tabs>
+    </GluestackUIProvider>
   );
 }
